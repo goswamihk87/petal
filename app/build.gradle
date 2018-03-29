@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    compileSdkVersion project.compileSdkVersion
+    buildToolsVersion project.buildToolsVersion
+
+    defaultConfig {
+        applicationId "com.template"
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+        versionCode project.versionCode
+        versionName project.versionName
+        //this will set apk name with version code and version name
+        setProperty("archivesBaseName", "build_v${project.versionCode}-${project.versionName}_d${getDate()}")
+    }
+
+    signingConfigs {
+        allVariants {
+            //these properties should be defined in gradle.properties file
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
+    }
+
+    //Java 8 is required along with retro lambda
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    //DO NOT FORGET to set IS_DEBUGGABLE in Consts, otherwise library modules will still print the logs
+    buildTypes {
+        debug {
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            debuggable false
+            //uncomment when release
+            //minifyEnabled true
+            //shrinkResources true
+            //signingConfig signingConfigs.allVariants
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+static def getDate() {
+    new Date().format('dd-MM-yyyy')
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':general')
+
+    compile "com.jakewharton:butterknife:${butterKnife}"
+    annotationProcessor "com.jakewharton:butterknife-compiler:${butterKnife}"
+
+    debugCompile "com.squareup.leakcanary:leakcanary-android:${leakCanary}"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanary}"
+    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanary}"
+}

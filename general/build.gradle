@@ -1,0 +1,78 @@
+apply plugin: 'com.android.library'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    compileSdkVersion project.compileSdkVersion
+    buildToolsVersion project.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+        versionCode project.versionCode
+        versionName project.versionName
+    }
+
+    //Java 8 is required along with retro lambda
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            debuggable false
+            //uncomment when release
+            //minifyEnabled true
+            //shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //Note: Never put versions here. see project level build.gradle.
+    //region #Basic Libraries:
+    //support libs
+    compile "com.android.support:support-v4:${supportLib}"
+    compile "com.android.support:appcompat-v7:${supportLib}"
+    compile "com.android.support:design:${supportLib}"
+    compile "com.android.support:recyclerview-v7:${supportLib}"
+
+    //gson
+    compile "com.google.code.gson:gson:${gson}"
+
+    //dagger
+    compile "com.google.dagger:dagger:${dagger}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${dagger}"
+
+    //timber
+    compile "com.jakewharton.timber:timber:${timber}"
+
+    //okhttp and logging interceptor
+    compile "com.squareup.okhttp3:okhttp:${okHttp}"
+    compile "com.squareup.okhttp3:logging-interceptor:${okHttp}"
+
+    //retrofit, gson converter & rxJava adapter
+    compile("com.squareup.retrofit2:retrofit:${retrofit}") {
+        exclude group: 'com.squareup.okhttp', module: 'okhttp'
+    }
+    compile("com.squareup.retrofit2:converter-gson:${retrofit}") {
+        exclude group: 'com.squareup.okhttp', module: 'okhttp'
+    }
+    compile("com.squareup.retrofit2:adapter-rxjava:${retrofit}") {
+        exclude group: 'io.reactivex', module: 'rxjava'
+    }
+
+    //otto event bus
+    compile "com.squareup:otto:${otto}"
+
+    //Rx
+    compile "io.reactivex:rxandroid:${rxAndroid}"
+    compile "io.reactivex:rxjava:${rxJava}"
+    //endregion
+}
